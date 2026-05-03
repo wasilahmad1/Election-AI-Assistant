@@ -1,0 +1,305 @@
+:root {
+    /* Light Theme (Default) */
+    --bg-color: #ffffff;
+    --chat-bg: #ffffff;
+    --header-bg: #ffffff;
+    --text-main: #0d0d0d;
+    --text-muted: #666666;
+    --user-msg: #f4f4f4;
+    --ai-msg: #ffffff;
+    --border-color: #e5e5e5;
+    --primary: #10a37f; /* ChatGPT Green */
+    --primary-dark: #1a7f64;
+    --input-bg: #ffffff;
+    --icon-color: #8e8ea0;
+}
+
+[data-theme="dark"] {
+    /* Dark Theme */
+    --bg-color: #212121;
+    --chat-bg: #212121;
+    --header-bg: #212121;
+    --text-main: #ececec;
+    --text-muted: #b4b4b4;
+    --user-msg: #2f2f2f;
+    --ai-msg: #212121;
+    --border-color: #424242;
+    --primary: #10a37f;
+    --primary-dark: #1a7f64;
+    --input-bg: #2f2f2f;
+    --icon-color: #ececec;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    height: 100%;
+    background-color: var(--chat-bg);
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+/* Header */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.chat-header h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    background-color: var(--user-msg);
+}
+
+/* Chat Area */
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    padding-bottom: 20px;
+}
+
+/* Scrollbar */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+.chat-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 10px;
+}
+
+.message {
+    padding: 24px 15%;
+    display: flex;
+    gap: 16px;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@media (max-width: 768px) {
+    .message {
+        padding: 16px 20px;
+    }
+}
+
+.message-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.user-message .message-icon {
+    background-color: #5436DA;
+    color: white;
+}
+
+.ai-message .message-icon {
+    background-color: var(--primary);
+    color: white;
+}
+
+.message-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    flex: 1;
+    color: var(--text-main);
+}
+
+.user-message {
+    background-color: var(--bg-color);
+}
+
+.ai-message {
+    background-color: var(--user-msg);
+}
+
+.message-content p {
+    margin-bottom: 16px;
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.message-content ul, .message-content ol {
+    margin-left: 24px;
+    margin-bottom: 16px;
+}
+
+.message-content strong {
+    font-weight: 600;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    padding: 24px 15%;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.typing-indicator.hidden {
+    display: none !important;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    padding-top: 8px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background-color: var(--text-muted);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Input Area */
+.input-area {
+    padding: 24px 15%;
+    background: linear-gradient(180deg, transparent, var(--bg-color) 40%);
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .input-area {
+        padding: 16px 20px;
+    }
+}
+
+#chat-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background-color: var(--input-bg);
+    padding: 8px 12px 8px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s, background-color 0.3s;
+}
+
+#chat-form:focus-within {
+    border-color: var(--text-muted);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] #chat-form {
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+#user-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1rem;
+    padding: 8px 0;
+    outline: none;
+    resize: none;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#user-input::placeholder {
+    color: var(--text-muted);
+}
+
+#send-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#send-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+#send-btn:disabled {
+    background-color: var(--border-color);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

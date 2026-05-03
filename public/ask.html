@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask India Elections AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .ask-container {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .response-box {
+            background-color: var(--ai-msg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 150px;
+            margin-top: 20px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+        .response-box p {
+            margin-bottom: 10px;
+        }
+        .response-box ul, .response-box ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .nav-links {
+            padding: 10px 24px;
+            background-color: var(--chat-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="chat-header">
+            <div class="header-info">
+                <h1>India Elections Q&A</h1>
+                <p>Instant answers to your specific questions</p>
+            </div>
+            <div class="status-indicator">
+                <span class="pulse"></span> Online
+            </div>
+        </header>
+        
+        <div class="nav-links">
+            <a href="/">← Back to Chat</a>
+        </div>
+
+        <main class="ask-container">
+            <form id="ask-form">
+                <div style="display: flex; gap: 10px; width: 100%;">
+                    <input 
+                        type="text" 
+                        id="question-input" 
+                        placeholder="What is the minimum age to vote in India?" 
+                        autocomplete="off"
+                        required
+                        style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-main); font-size: 1rem; outline: none;"
+                    >
+                    <button type="submit" id="ask-btn" style="padding: 0 20px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; font-weight: 600; cursor: pointer; transition: transform 0.2s;">Ask</button>
+                </div>
+            </form>
+            
+            <div id="loading" class="hidden" style="color: var(--text-muted); font-size: 0.9em; display: flex; align-items: center; gap: 8px;">
+                <span class="pulse" style="background-color: var(--primary); box-shadow: none;"></span> Thinking...
+            </div>
+            
+            <div class="response-box" id="response-display">
+                <em>Your answer will appear here...</em>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        document.getElementById('ask-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const questionInput = document.getElementById('question-input');
+            const askBtn = document.getElementById('ask-btn');
+            const responseDisplay = document.getElementById('response-display');
+            const loading = document.getElementById('loading');
+            
+            const question = questionInput.value.trim();
+            if (!question) return;
+            
+            askBtn.disabled = true;
+            loading.classList.remove('hidden');
+            responseDisplay.innerHTML = '';
+            
+            try {
+                const res = await fetch('/api/question', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    responseDisplay.innerHTML = marked.parse(data.answer);
+                } else {
+                    responseDisplay.innerHTML = `<span style="color: #ef4444;">Error: ${data.error}</span>`;
+                }
+            } catch (err) {
+                responseDisplay.innerHTML = '<span style="color: #ef4444;">Network error. Make sure server is running.</span>';
+            } finally {
+                askBtn.disabled = false;
+                loading.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
